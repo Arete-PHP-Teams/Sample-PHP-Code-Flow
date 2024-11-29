@@ -1,0 +1,55 @@
+#RewriteEngine On
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteCond %{REQUEST_FILENAME}\.php -f
+#RewriteRule ^([^/]+)/([^/]+)$ $1.php?id=$2 [NC,L]
+
+
+
+# RewriteEngine On
+# RewriteCond %{REQUEST_URI} ^/$ 
+# RewriteRule ^$ /index [L,R=301]
+
+# RewriteCond %{REQUEST_FILENAME} !-f
+# RewriteCond %{REQUEST_FILENAME} !-d
+# RewriteRule (.*) /index.php/$1 [L]
+# RewriteRule ^(.+?)/?$ $1.php [NC,L]
+# RewriteCond %{THE_REQUEST} .php [NC] 
+# RewriteRule ^ - [R=404,L]
+
+# Ensure the server is using HTTPS and set Secure cookies
+RewriteEngine On
+
+# Redirect root URL to /index
+RewriteCond %{REQUEST_URI} ^/$
+RewriteRule ^$ /index [L,R=301]
+
+# Ensure existing rules are properly handled
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.+?)/?$ $1.php [NC,L]
+
+# Block direct access to .php files
+RewriteCond %{THE_REQUEST} \.php [NC]
+RewriteRule ^ - [R=404,L]
+
+<IfModule mod_headers.c>
+    # Hide platform, X-Powered-By, and Server headers
+    Header unset Platform
+    Header unset X-Powered-By
+    Header unset Server
+
+    # Set Secure, HttpOnly, SameSite for PHPSESSID cookie
+    #Header edit Set-Cookie "^PHPSESSID=(.*)$" "PHPSESSID=$1; HttpOnly; Secure; SameSite=Strict"
+    #Header always edit Set-Cookie ^(.*)$ "$1; HttpOnly; Secure; SameSite=Strict"
+    #Header always edit Set-Cookie ^(PHPSESSID=.*)$ "$1; HttpOnly; Secure; SameSite=Strict" env=PHPSESSID_cookie
+
+
+
+    Header set Referrer-Policy "no-referrer-when-downgrade"
+
+</IfModule>
+
+# Disable server signature to hide server details
+ServerSignature Off
+
+
